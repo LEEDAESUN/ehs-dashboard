@@ -152,8 +152,8 @@
   #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1c2733;color:#fff;padding:11px 20px;border-radius:9px;font-size:13px;box-shadow:0 6px 20px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .2s;z-index:100}
   #toast.show{opacity:1}
   /* 법령 팝업 모달 */
-  #lawmodal,#recmodal{position:fixed;inset:0;background:rgba(20,28,40,.45);display:none;align-items:center;justify-content:center;z-index:200}
-  #lawmodal.show,#recmodal.show{display:flex}
+  #lawmodal,#recmodal,#docmodal{position:fixed;inset:0;background:rgba(20,28,40,.45);display:none;align-items:center;justify-content:center;z-index:200}
+  #lawmodal.show,#recmodal.show,#docmodal.show{display:flex}
   .rmtbl{width:100%;border-collapse:collapse}
   .rmtbl th,.rmtbl td{padding:7px 9px;border-bottom:1px solid var(--line);font-size:12.5px;text-align:left;vertical-align:top}
   .lm-box{background:#fff;width:min(560px,92vw);max-height:82vh;border-radius:12px;box-shadow:0 18px 50px rgba(0,0,0,.3);display:flex;flex-direction:column;overflow:hidden}
@@ -493,6 +493,11 @@
   <div class="lm-body" id="lm-body"></div>
   <div class="lm-foot"><span style="font-size:11px;color:var(--muted)">요약 조문 · <b>최신 원문 ↗</b>은 국가법령정보센터 현행 법령(새창)</span><a onclick="closeLawModal();go('law')">전체 관련법령 조회 ›</a></div>
 </div></div>
+<div id="docmodal"><div class="lm-box">
+  <div class="lm-head"><b>📄 지침서 원문</b><button class="lm-x" onclick="closeDocModal()">×</button></div>
+  <div class="lm-body" id="doc-body"></div>
+  <div class="lm-foot"><span style="font-size:11px;color:var(--muted)">사내 지침서 · SharePoint 문서함 원문</span></div>
+</div></div>
 <div id="recmodal"><div class="lm-box">
   <div class="lm-head"><b id="rm-title">기록 상세</b><button class="lm-x" onclick="closeRecModal()">×</button></div>
   <div class="lm-body" id="rm-body"></div>
@@ -696,7 +701,7 @@
       flow:F('위원회 구성|노사 각5명 이내','회의 소집|3일 전 통지','개최|정기 분기·소위 월1회','심의·의결|2/3출석 과반','의결 집행|7일내 시정조치보고','결과 공지·기록|3년 보관')},
     '안전점검순찰':{ reg:false, v:'confirmed', gov:'I-EHS-04 안전보건 운영관리 지침 Rev.3 (순회점검·점검개선)', desc:'순회·안전 점검 및 지적 개선 — EHS 개선현황(종합new) 관리 파일 연동',
       files:[['★씨티알모빌리티 EHS 개선현황_R5(최종본)_★링크 연결 파일.xlsx','EHS 개선현황 관리 파일 (종합new)','2026-07','공통','https://ctrcentral.sharepoint.com/sites/93/Shared Documents/CTR M EHS팀/03. S(Safety)/02. 안전/01. 안전점검순찰/00. 공통/위험점 개선/2026년/★씨티알모빌리티 EHS 개선현황_R5(최종본)_★링크 연결 파일.xlsx']],
-      flow:F('점검 계획|주기','체크리스트 점검|현장','지적사항 등록|기록','개선 조치|담당','결과 보고|공유')},
+      flow:F('점검 일정 수립|주기','현장 점검|체크리스트','지적사항 등록|기록','개선조치 확인|담당')},
     // ===== 소방 =====
     '소방계획서':{ folder:'https://ctrcentral.sharepoint.com/sites/93/Shared Documents/CTR M EHS팀/03. S(Safety)/03. 소방/01. 소방계획서', v:'confirmed', gov:'I-EHS-04 Ⅸ. 소방안전관리', desc:'소방계획서 작성·승인·보고', flow:F('작성|매년 10월(차기년도)','대표이사 승인|','관할 소방서 보고|','교육·훈련|연계','점검·보완|')},
     '작동기능점검':{ folder:'https://ctrcentral.sharepoint.com/sites/93/Shared Documents/CTR M EHS팀/03. S(Safety)/03. 소방/02. 소방작동기능점검', v:'confirmed', gov:'I-EHS-04 Ⅸ. 소방안전관리', desc:'소방시설 외관·작동기능점검', flow:F('외관점검|월 1회','작동·기능점검|연 1회(상반기)','점검표 기록|','소방서 보고|','불량 개선|정비업체'),
@@ -1046,7 +1051,7 @@
   // patrol_data.js가 있으면(폴더의 자동 데이터) 그걸, 없으면 위 임베드 고정본 사용 — 둘 다 열기만 하면 자동
   var PATROL_LIVE = (typeof window!=='undefined' && window.PATROL_DATA) ? window.PATROL_DATA : PATROL_EMBED;
   var ptStamp=null, ptLiveLoaded=false, ptTimer=null;
-  function ptBadge(){ return ptLiveLoaded ? '<span class="pill g" style="font-size:10.5px">● 실시간'+(ptStamp?' · '+esc(ptStamp):'')+'</span>' : '<span class="pill" style="font-size:10.5px;background:#eef1f5;color:#788699">캡처 스냅샷</span>'; }
+  function ptBadge(){ return ptLiveLoaded ? '<span class="pill g" style="font-size:10.5px">● CSV 반영'+(ptStamp?' · '+esc(ptStamp):'')+'</span>' : '<span class="pill" style="font-size:10.5px;background:#eef1f5;color:#788699">캡처 스냅샷</span>'; }
   function ptApplyLive(j){ if(j&&j.d){ PATROL.d=j.d; ptStamp=j.stamp||j.updated||''; ptLiveLoaded=true; return true; } return false; }
   // 종합new CSV 파서 — 공장별 월별 종합 현황(발굴/완료)만 추출
   function ptParseCSV(text){
@@ -1090,7 +1095,7 @@
       if(ptApplyLive(j)){ try{localStorage.setItem('ehs_patrol_live',JSON.stringify(j));}catch(e){} const c=document.getElementById('d-custom'); if(c&&curItem==='안전점검순찰') c.innerHTML=patrolSummaryHTML(); if(!silent&&typeof toast==='function') toast('종합현황 최신 반영됨'); }
       else if(!silent&&typeof toast==='function') toast('CSV에서 데이터를 찾지 못함');
     }).catch(function(e){ if(!silent){ if(typeof toast==='function') toast('자동 읽기가 막혀 파일 선택으로 전환합니다'); ptPickCSV(); } }); }
-  function flowHTML(name){ const d=itemData[name]; if(!d||!d.flow) return ''; return '<div class="card" style="margin-bottom:14px"><h3>업무 Flow <span class="tag">업무 흐름</span></h3><div class="flow">'+d.flow.map(function(s,i){return '<div class="fstep"><div class="sn">STEP '+s[0]+'</div><div class="st">'+esc(s[1])+'</div><div class="so">'+esc(s[2])+'</div></div>'+(i<d.flow.length-1?'<div class="farrow">▶</div>':'');}).join('')+'</div></div>'; }
+  function flowHTML(name){ const d=itemData[name]; if(!d||!d.flow) return ''; return '<div class="card" style="margin-bottom:14px"><h3>업무 Flow</h3><div class="flow">'+d.flow.map(function(s,i){return '<div class="fstep"><div class="sn">STEP '+s[0]+'</div><div class="st">'+esc(s[1])+'</div><div class="so">'+esc(s[2])+'</div></div>'+(i<d.flow.length-1?'<div class="farrow">▶</div>':'');}).join('')+'</div></div>'; }
   function patrolSummaryHTML(){
     const per=patrolPeriod;
     const tabs=PATROL.periods.map(function(p){const has=PATROL.fac.some(function(f){return ptCell(f.n,p,'계');}); return '<button onclick="setPatrolPeriod(\''+p+'\')" '+(has?'':'disabled')+' style="padding:7px 13px;border:1px solid var(--line);border-radius:8px;font-size:12.5px;cursor:'+(has?'pointer':'default')+';font-weight:700;'+(p===per?'background:var(--navy);color:#fff;border-color:var(--navy)':'background:#fff;color:'+(has?'var(--text)':'#c3c9d3'))+'">'+p+'</button>';}).join(' ');
@@ -1531,7 +1536,7 @@
     const lawChip='<span class="pill" style="cursor:pointer;background:#e6effd;color:#2159c9" onclick="showLawModal(\''+gv+'\',\''+nm+'\')">📖 관련법령 보기 ›</span>';
     const codes=(d.gov||'').match(/I-EHS-\d+/g);
     if(codes){ const c=codes[0];
-      govChip='<span onclick="openDoc(\''+c+'\')" style="cursor:pointer" title="지침서 바로 보기">'+govChip+' <b style="color:#0f8a45">바로 보기 ›</b></span>'; }
+      govChip='<span onclick="showDocModal(\''+c+'\',\''+gv+'\',\''+nm+'\')" style="cursor:pointer" title="지침서 원문 팝업">'+govChip+'</span>'; }
     document.getElementById('d-meta').innerHTML = cycChip + govChip + lawChip;
     if(name==='연간안전보건계획'||name==='안전보건체계문서'){
       ['d-flowcard','d-tabbar','d-tabcard','d-site'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none';});
@@ -1752,7 +1757,7 @@
   renderDevStatus();
   // ===== 법령 팝업 =====
   const LAW_INFO={
-    '산업안전보건법':{name:'산업안전보건법',eff:'시행 2026.8.1. · 법률 제21374호',
+    '산업안전보건법':{name:'산업안전보건법',eff:'시행 2026.6.1. · 법률 제21374호(2026.2.19 공포)',
       arts:[['제2조(정의)','"중대재해"란 산업재해 중 사망 등 재해 정도가 심하거나 다수 발생한 재해로서 고용노동부령으로 정하는 재해를 말한다.'],
             ['제15조·제16조','안전보건관리책임자·관리감독자 선임 및 업무 총괄·관리.'],
             ['제36조','위험성평가 실시 — 유해·위험요인을 찾아 부상·질병 가능성과 중대성을 추정·결정하고 감소대책 수립·실행.'],
@@ -1793,7 +1798,8 @@
   const TOPICMAP=[
     [['비상','시나리오','비상사태','모의훈련'],['비상대응규정']],
     [['화재','소방','소화','피난','경보','소방계획','작동기능','소방훈련','소방시설','소화기','소방안전관리','필증'],['화재예방법','소방시설 설치·관리법']],
-    [['누출','유출','화학사고','유해화학'],['화학물질관리법']]
+    [['누출','유출','화학사고','유해화학'],['화학물질관리법']],
+    [['순회','점검순찰','순회점검','점검개선'],['산업안전보건법']]
   ];
   const DOC_LINKS={"I-EHS-01": "https://ctrcentral-my.sharepoint.com/personal/ctrfs05_ctr_co_kr/Documents/EHS팀/EHS(공통)/00. 기획(공통)/03. ISO/03. 매뉴얼 프로세스 지침서/지침서/● I-EHS-01(EHS 리스크 관리지침)-Rev.3.xlsx", "I-EHS-02": "https://ctrcentral.sharepoint.com/sites/93/Shared Documents/CTR M EHS팀/00. 기획/03. ISO 프로세스/03. 매뉴얼 프로세스 지침서/지침서/● I-EHS-02(EHS 교육 운영 지침)-Rev.1.xlsx", "I-EHS-03": "https://ctrcentral.sharepoint.com/sites/93/Shared Documents/CTR M EHS팀/00. 기획/03. ISO 프로세스/03. 매뉴얼 프로세스 지침서/지침서/● I-EHS-03(환경운영관리 지침)--Rev.6.xlsx", "I-EHS-04": "https://ctrcentral.sharepoint.com/sites/93/Shared Documents/CTR M EHS팀/00. 기획/03. ISO 프로세스/03. 매뉴얼 프로세스 지침서/지침서/● I-EHS-04(안전보건 운영관리 지침)-Rev.2 - (모빌리티).xlsx", "I-EHS-05": "https://ctrcentral.sharepoint.com/sites/93/Shared Documents/CTR M EHS팀/00. 기획/03. ISO 프로세스/03. 매뉴얼 프로세스 지침서/지침서/● I-EHS-05(EHS 비상사태 운영 지침)-Rev.3(모빌리티).xlsx", "I-EHS-06": "https://ctrcentral.sharepoint.com/sites/93/Shared Documents/CTR M EHS팀/00. 기획/03. ISO 프로세스/03. 매뉴얼 프로세스 지침서/지침서/● I-EHS-06(EHS 준수평가 관리지침)-Rev.2(모빌리티).xlsx", "I-EHS-07": "https://ctrcentral.sharepoint.com/sites/93/Shared Documents/CTR M EHS팀/00. 기획/03. ISO 프로세스/03. 매뉴얼 프로세스 지침서/지침서/● I-EHS-07(산업재해관리 지침)-Rev2(모빌리티).xlsx", "I-EHS-08": "https://ctrcentral.sharepoint.com/sites/93/Shared Documents/CTR M EHS팀/00. 기획/03. ISO 프로세스/03. 매뉴얼 프로세스 지침서/지침서/● I-EHS-08(내부심사 지침)-Rev.4(모빌리티).xlsx", "I-EHS-09": "https://ctrcentral.sharepoint.com/sites/93/Shared Documents/CTR M EHS팀/00. 기획/03. ISO 프로세스/03. 매뉴얼 프로세스 지침서/지침서/● I-EHS-09(문서관리 지침)-Rev.4(모빌리티).xlsx", "I-EHS-10": "https://ctrcentral.sharepoint.com/sites/93/Shared Documents/CTR M EHS팀/00. 기획/03. ISO 프로세스/03. 매뉴얼 프로세스 지침서/지침서/● I-EHS-10(시정 및 예방조치 지침)-Rev.3(모빌리티).xlsx", "I-EHS-12": "https://ctrcentral.sharepoint.com/sites/93/Shared Documents/CTR M EHS팀/00. 기획/03. ISO 프로세스/03. 매뉴얼 프로세스 지침서/지침서/● I-EHS-12(경영검토 지침)-Rev.3.xlsx"};
   function openDoc(code){ if(DOC_LINKS[code]){window.open(DOC_LINKS[code],'_blank');} else {toast(code+' 지침서 링크는 SharePoint 문서함 연동 시 활성화됩니다');} }
@@ -1991,6 +1997,19 @@
   function closeLawModal(){document.getElementById('lawmodal').classList.remove('show');}
   document.getElementById('lawmodal').addEventListener('click',e=>{if(e.target.id==='lawmodal')closeLawModal();});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLawModal();});
+  function showDocModal(code,gov,name){
+    var link=DOC_LINKS[code];
+    var body=document.getElementById('doc-body');
+    var esc2=function(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
+    var btn = link
+      ? '<a class="btn sm" href="'+link+'" target="_blank" rel="noopener" style="text-decoration:none">SharePoint 원문 열기 ↗</a>'
+      : '<span style="font-size:12px;color:var(--muted)">SharePoint 문서함 연동 시 원문 링크가 활성화됩니다.</span>';
+    body.innerHTML='<div class="lm-law"><b>'+esc2(code)+'</b><div class="lm-txt" style="margin:8px 0 14px">'+esc2(gov)+'</div>'+btn+'</div>';
+    document.getElementById('docmodal').classList.add('show');
+  }
+  function closeDocModal(){document.getElementById('docmodal').classList.remove('show');}
+  document.getElementById('docmodal').addEventListener('click',e=>{if(e.target.id==='docmodal')closeDocModal();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDocModal();});
 </script>
 </body>
 </html>
