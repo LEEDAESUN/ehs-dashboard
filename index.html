@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CTR EHS 통합 대시보드 (가안)</title>
+<title>CTR EHS 업무포탈</title>
 <style>
   :root{
     --navy:#22415f; --navy2:#2e567b; --bg:#f2f5f9; --card:#fff; --line:#eaeef4;
@@ -1853,11 +1853,11 @@
       var no=basic['공포번호']||''; var name=basic['법령명_한글']||basic['법령명한글']||officialLawName(raw);
       var jo=((root['조문']||{})['조문단위'])||root['조문단위']||[];
       if(!Array.isArray(jo)) jo=[jo];
-      var arts=jo.filter(function(j){return j&&j['조문내용'];}).slice(0,80).map(function(j){
+      var arts=jo.filter(function(j){return j&&j['조문내용'];}).map(function(j){
         var head=(j['조문번호']?('제'+j['조문번호']+'조'):'')+(j['조문제목']?('('+j['조문제목']+')'):'');
-        var txt=(j['조문내용']||'').replace(/^\s*제\s*\d+\s*조\s*(\([^)]*\))?\s*/,'');
+        var txt=(j['조문내용']||'').replace(/^\s*제\s*\d+\s*조\s*(\([^)]*\))?\s*/,'').trim();
         return [head||'조문', txt];
-      });
+      }).filter(function(a){return a[1] && a[1].length;}).slice(0,80);
       if(!arts.length) return null;
       return { name:name, eff:(eff?('시행 '+String(eff).replace(/(\d{4})(\d{2})(\d{2})/,'$1.$2.$3')+(no?(' · 공포 '+no):'')):''), arts:arts, live:true };
     }catch(e){ return null; }
@@ -1998,13 +1998,11 @@
   document.getElementById('lawmodal').addEventListener('click',e=>{if(e.target.id==='lawmodal')closeLawModal();});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLawModal();});
   function showDocModal(code,gov,name){
-    var link=DOC_LINKS[code];
     var body=document.getElementById('doc-body');
-    var esc2=function(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
-    var btn = link
-      ? '<a class="btn sm" href="'+link+'" target="_blank" rel="noopener" style="text-decoration:none">SharePoint 원문 열기 ↗</a>'
-      : '<span style="font-size:12px;color:var(--muted)">SharePoint 문서함 연동 시 원문 링크가 활성화됩니다.</span>';
-    body.innerHTML='<div class="lm-law"><b>'+esc2(code)+'</b><div class="lm-txt" style="margin:8px 0 14px">'+esc2(gov)+'</div>'+btn+'</div>';
+    var e2=function(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
+    body.innerHTML='<div class="lm-law"><div class="lm-ln">'+e2(code)
+      +'<button class="btn ghost sm" style="margin-left:8px;vertical-align:middle;font-size:10px;padding:3px 8px" onclick="openDoc(\''+code+'\')">원문 보기 ↗</button></div>'
+      +'<div class="lm-eff">'+e2(gov)+'</div></div>';
     document.getElementById('docmodal').classList.add('show');
   }
   function closeDocModal(){document.getElementById('docmodal').classList.remove('show');}
