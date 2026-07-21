@@ -204,7 +204,7 @@
     <div class="brand"><div class="logo"><img src="ctr_logo.png" class="logoimg" alt="CTR"><span class="logotxt">EHS 업무포탈</span></div></div>
     <nav class="nav">
       <a data-p="home" class="on">◧ 홈 (통합)</a>
-      <a href="https://ctrcentral.sharepoint.com/sites/93/SitePages/CollabHome.aspx" target="_blank" rel="noopener">🏠 홈 (쉐어포인트)</a>
+      <a href="https://ctrcentral.sharepoint.com/sites/93/SitePages/CollabHome.aspx" target="_blank" rel="noopener">◧ 홈 (쉐어포인트)</a>
 
       <div class="grp">경영시스템</div>
       <a class="navtop" data-p="system" data-grp="system">◇ 경영시스템 <span class="caret">▾</span></a>
@@ -222,8 +222,7 @@
         <div class="dom-block" data-dom="plan">
           <a class="navtop" data-p="plan" data-grp="plan">📋 기획<span class="caret">▾</span></a>
           <div class="subnav" id="sub-plan">
-            <a data-p="plan" data-g="plan">기획 (12)</a>
-            <a data-p="edu">🎓 교육</a>
+            <a data-p="plan" data-g="plan">기획 (13)</a>
           </div>
         </div>
 
@@ -338,7 +337,7 @@
       <!-- ============ 기획 ============ -->
       <section class="page" id="plan">
         <div class="banner" style="background:linear-gradient(100deg,#4b4b8a,#6c6cae)"><div class="ico">📋</div><div><div class="bt">기획 (Planning)</div><div class="bd">EHS 기획 — ESG·사업계획·ISO 프로세스·선임·예산 등 (SharePoint 00. 기획)</div></div></div>
-        <div class="group" data-grp="plan"><div class="ghead"><span class="swatch" style="background:#6f6fd6"></span> 기획 <span class="cnt">12개 항목</span></div><div class="tiles" id="t-plan"></div></div>
+        <div class="group" data-grp="plan"><div class="ghead"><span class="swatch" style="background:#6f6fd6"></span> 기획 <span class="cnt">13개 항목</span></div><div class="tiles" id="t-plan"></div></div>
       </section>
 
       <!-- ============ 안전 ============ -->
@@ -512,7 +511,7 @@
 <script>
   // ===== 항목 데이터 (도메인/그룹별) =====
   const D={
-    plan:['ESG','사업계획','ISO 프로세스','조직 및 업무분장','선임','예산','EHS 법령 제개정','업무보고','인원 채용','보험증권','행사','기타'],
+    plan:['ESG','사업계획','ISO 프로세스','조직 및 업무분장','선임','예산','EHS 법령 제개정','업무보고','인원 채용','보험증권','행사','기타','교육'],
     safe:['안전점검순찰','협의체(산안위)','안전사고','유해위험기계기구','안전작업허가서','보호구','중처법 체계','표지양식 등','안전대행','유해위험방지계획서','안전보건방침규정','비상사태 시나리오'],
     fire:['소방계획서','작동기능점검','소방훈련','소방시설물','소화기비치도','화재보험협회','소방안전관리자 업무일지','소방 필증'],
     hazmat:['위험물안전관리자','위험물저장소'],
@@ -1516,6 +1515,7 @@
     return out;
   }
   function openItem(name){
+    if(name==='교육'){ go('edu'); return; }
     curItem=name;
     const d=itemData[name]||{desc:name+' — 관련 파일은 연동 예정입니다.',flow:PDCA,files:[],src:''};
     ['d-flowcard','d-tabbar','d-tabcard','d-back','d-meta'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='';});
