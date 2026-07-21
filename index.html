@@ -690,7 +690,7 @@
     '중처법 체계':{ folder:'https://ctrcentral.sharepoint.com/sites/93/Shared Documents/CTR M EHS팀/03. S(Safety)/02. 안전/07. 중처법 체계', v:'confirmed', gov:'중대재해처벌법 · 안전보건관리체계(I-EHS-01~12 전반)', desc:'안전보건관리체계 9대 의무 이행',
       flow:F('경영방침·목표|수립','전담조직·예산|편성','위험성평가|유해위험 개선','종사자 의견|청취','비상대응|매뉴얼·훈련','반기 점검·개선|이행')},
     '보호구':{ folder:'https://ctrcentral.sharepoint.com/sites/93/Shared Documents/CTR M EHS팀/03. S(Safety)/02. 안전/06. 보호구', v:'confirmed', gov:'I-EHS-04 Ⅶ. 안전보호구 관리', desc:'개인보호구 지급·관리 (안전인증품)',
-      flow:F('지급기준 수립|위험성평가 반영','안전인증 제품 선정|구입','지급·관리대장 기록|공정별','수시 육안점검|미착용 부적합처리','마모·파손 교체|폐기')},
+      flow:F('지급기준 수립|위험성평가 반영','안전인증 제품 선정|구입','지급·관리대장 기록|공정별','마모·파손 교체|폐기')},
     '안전작업허가서':{ folder:'https://ctrcentral.sharepoint.com/sites/93/Shared Documents/CTR M EHS팀/03. S(Safety)/02. 안전/05. 안전작업허가서', v:'confirmed', gov:'I-EHS-04 Ⅵ. 안전작업허가', desc:'위험작업(화기·고소·전기·중량물·PIT·보수) 허가',
       flow:F('작업책임자 작성|작업 3일 전','첨부·사전안전성검토|위험성평가','EHS팀장·공장장 승인|허가','작업 전 안전조치·교육|현장','작업 중 감독·입회|불시점검','종료·정리·제출|보관 3년')},
     '유해위험기계기구':{ folder:'https://ctrcentral.sharepoint.com/sites/93/Shared Documents/CTR M EHS팀/03. S(Safety)/02. 안전/04. 유해위험기계기구(지게차 포함)', v:'confirmed', gov:'I-EHS-04 Ⅴ. 위험기계기구 관리', desc:'프레스·크레인·지게차 등 검사·방호',
@@ -1095,7 +1095,7 @@
       if(ptApplyLive(j)){ try{localStorage.setItem('ehs_patrol_live',JSON.stringify(j));}catch(e){} const c=document.getElementById('d-custom'); if(c&&curItem==='안전점검순찰') c.innerHTML=patrolSummaryHTML(); if(!silent&&typeof toast==='function') toast('종합현황 최신 반영됨'); }
       else if(!silent&&typeof toast==='function') toast('CSV에서 데이터를 찾지 못함');
     }).catch(function(e){ if(!silent){ if(typeof toast==='function') toast('자동 읽기가 막혀 파일 선택으로 전환합니다'); ptPickCSV(); } }); }
-  function flowHTML(name){ const d=itemData[name]; if(!d||!d.flow) return ''; return '<div class="card" style="margin-bottom:14px"><h3>업무 Flow</h3><div class="flow">'+d.flow.map(function(s,i){return '<div class="fstep"><div class="sn">STEP '+s[0]+'</div><div class="st">'+esc(s[1])+'</div><div class="so">'+esc(s[2])+'</div></div>'+(i<d.flow.length-1?'<div class="farrow">▶</div>':'');}).join('')+'</div></div>'; }
+  function flowHTML(name){ const d=itemData[name]; if(!d||!d.flow) return ''; return '<div class="card" style="margin-bottom:14px"><h3>업무 Flow</h3><div class="flow">'+d.flow.map(function(s,i){return '<div class="fstep"><div class="sn">STEP '+s[0]+'</div><div class="st">'+esc(s[1])+'</div></div>'+(i<d.flow.length-1?'<div class="farrow">▶</div>':'');}).join('')+'</div></div>'; }
   function patrolSummaryHTML(){
     const per=patrolPeriod;
     const tabs=PATROL.periods.map(function(p){const has=PATROL.fac.some(function(f){return ptCell(f.n,p,'계');}); return '<button onclick="setPatrolPeriod(\''+p+'\')" '+(has?'':'disabled')+' style="padding:7px 13px;border:1px solid var(--line);border-radius:8px;font-size:12.5px;cursor:'+(has?'pointer':'default')+';font-weight:700;'+(p===per?'background:var(--navy);color:#fff;border-color:var(--navy)':'background:#fff;color:'+(has?'var(--text)':'#c3c9d3'))+'">'+p+'</button>';}).join(' ');
@@ -1147,8 +1147,8 @@
     {no:7,grp:'방열복',name:'방열복',mgmt:'',cert:null},
     {no:8,grp:'방열복',name:'방열보호 장갑',mgmt:'19-AV4CS-0003',cert:null}
   ];
-  const GEAR_LEDGER_FILE='보호구지급대장_양식(00년도).xlsx';
-  const GEAR_CHECK_FILE='안전보호구함_체크리스트_양식(00년도).xlsx';
+  const GEAR_LEDGER_FILE='https://ctrcentral.sharepoint.com/sites/93/Shared Documents/CTR M EHS팀/03. S(Safety)/02. 안전/06. 보호구/03. 대구/보호구지급대장.xlsx';
+  const GEAR_CHECK_FILE='https://ctrcentral.sharepoint.com/sites/93/Shared Documents/CTR M EHS팀/03. S(Safety)/02. 안전/06. 보호구/03. 대구/안전보호구함 체크리스트.xlsx';
   let gearCat='', gearQ='', gearTab='info', gearEditMode=false, gearDraft=[];
   function gearBaseRows(){ if(window.GEAR_DATA && Array.isArray(window.GEAR_DATA.rows)) return window.GEAR_DATA.rows; return GEAR_EMBED_ROWS; }
   function gearRows(){ var rows;
@@ -1210,10 +1210,10 @@
     if(typeof toast==='function')toast('gear_data.js 저장 — 대시보드와 같은 폴더에 넣으면 영구 유지');
   }
   function gearFormCard(title, desc, file){
-    return '<div style="padding:10px 2px"><div style="font-size:14px;font-weight:800;color:#1b3a6b;margin-bottom:6px">📄 '+esc(title)+' <span style="font-size:11px;font-weight:600;color:#788699">· 양식(00년도)</span></div>'
+    return '<div style="padding:10px 2px"><div style="font-size:14px;font-weight:800;color:#1b3a6b;margin-bottom:6px">📄 '+esc(title)+' <span style="font-size:11px;font-weight:600;color:#788699">· 대구 기준</span></div>'
       +'<div style="font-size:12.5px;color:#5a6675;margin-bottom:14px">'+esc(desc)+'</div>'
-      +'<a href="'+encodeURI(file)+'" download><button class="btn">⬇ 양식 다운로드</button></a>'
-      +'<div style="font-size:11px;color:var(--muted);margin-top:12px">※ 다운로드 전용입니다. 작성본은 SharePoint 보호구 폴더에 보관하세요. (양식 파일은 대시보드와 같은 폴더에 있어야 다운로드됩니다.)</div></div>';
+      +'<a href="'+encodeURI(file)+'" target="_blank" rel="noopener"><button class="btn">↗ 대구 원본 열기 (SharePoint)</button></a>'
+      +'<div style="font-size:11px;color:var(--muted);margin-top:12px">※ SharePoint 보호구 폴더(03. 대구)의 원본입니다. 열어서 확인·작성하세요.</div></div>';
   }
   function gearInfoTab(){
     let tree='<div onclick="gearSelect(\'\')" style="font-weight:700;font-size:12.5px;padding:6px 8px;border-radius:6px;cursor:pointer;'+(gearCat===''?'background:#eaf1ff;color:#1b3a6b':'')+'">📁 보호구관리</div>';
@@ -1272,8 +1272,8 @@
       return '<span onclick="gearTabTo(\''+t[0]+'\')" style="cursor:pointer;padding:8px 16px;font-weight:700;font-size:12.5px;border-radius:8px 8px 0 0;'+(on?'background:var(--navy);color:#fff':'background:#eef1f5;color:#5a6675')+'">'+t[1]+'</span>';
     }).join('')+'</div>';
     var inner;
-    if(gearTab==='ledger') inner=gearFormCard('보호구 지급대장','개인별 보호구 지급대장 — 다운로드 후 작성',GEAR_LEDGER_FILE);
-    else if(gearTab==='checklist') inner=gearFormCard('안전보호구함 체크리스트','보호구함 월별 안전 점검 체크리스트 — 다운로드 후 작성',GEAR_CHECK_FILE);
+    if(gearTab==='ledger') inner=gearFormCard('보호구 지급대장','개인별 보호구 지급대장 — 대구 원본 확인·작성',GEAR_LEDGER_FILE);
+    else if(gearTab==='checklist') inner=gearFormCard('안전보호구함 체크리스트','보호구함 월별 안전 점검 체크리스트 — 대구 원본 확인·작성',GEAR_CHECK_FILE);
     else inner=gearInfoTab();
     return flowHTML('보호구')+'<div class="card">'+tabbar+inner+'</div>';
   }
