@@ -1574,7 +1574,7 @@
     }
     document.getElementById('d-gov').textContent = govNote;
     document.getElementById('d-flow').innerHTML=d.flow.map((s,i)=>
-      `<div class="fstep"><div class="sn">STEP ${s[0]}</div><div class="st">${s[1]}</div><div class="so">${s[2]}</div></div>`+
+      `<div class="fstep"><div class="sn">STEP ${s[0]}</div><div class="st">${s[1]}</div></div>`+
       (i<d.flow.length-1?'<div class="farrow">▶</div>':'')).join('');
     curD=d;
     renderFiles(d);
