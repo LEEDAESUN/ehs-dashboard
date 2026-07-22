@@ -700,7 +700,7 @@
       flow:F('발생·긴급구호|목격자(비상사태 연계)','중대재해 즉시 보고|노동부·경찰','산재조사표 보고|24시간 내','원인조사·재발방지·수시위험성평가|48시간 내 제출','산재조사표 제출|1개월 내 노동관서','통계분석·재해자 관리|월1회 상담·기록 5년')},
     '협의체(산안위)':{ folder:'https://ctrcentral.sharepoint.com/sites/93/Shared Documents/CTR M EHS팀/03. S(Safety)/02. 안전/02. 협의체(산안위)', v:'confirmed', gov:'I-EHS-04 Ⅰ. 산안위 (산안법 §19·50인↑)', desc:'산업안전보건위원회 운영 (노사 동수)',
       flow:F('위원회 구성|노사 각5명 이내','회의 소집|3일 전 통지','개최|정기 분기·소위 월1회','심의·의결|2/3출석 과반','의결 집행|7일내 시정조치보고','결과 공지·기록|3년 보관')},
-    '안전점검순찰':{ reg:false, v:'confirmed', gov:'I-EHS-04 안전보건 운영관리 지침 Rev.3 (순회점검·점검개선)', desc:'순회·안전 점검 및 지적 개선 — EHS 개선현황(종합new) 관리 파일 연동',
+    '안전점검순찰':{ reg:false, v:'confirmed', p3:'https://p3.ctr.co.kr/entities/019f1780-4797-7698-86c1-2663ba7c5cf4', gov:'I-EHS-04 안전보건 운영관리 지침 Rev.3 (순회점검·점검개선)', desc:'순회·안전 점검 및 지적 개선 — EHS 개선현황(종합new) 관리 파일 연동',
       files:[['★씨티알모빌리티 EHS 개선현황_R5(최종본)_★링크 연결 파일.xlsx','EHS 개선현황 관리 파일 (종합new)','2026-07','공통','https://ctrcentral.sharepoint.com/sites/93/Shared Documents/CTR M EHS팀/03. S(Safety)/02. 안전/01. 안전점검순찰/00. 공통/위험점 개선/2026년/★씨티알모빌리티 EHS 개선현황_R5(최종본)_★링크 연결 파일.xlsx']],
       flow:F('점검 일정 수립','현장 점검','지적사항 등록 및 공유','개선조치 확인')},
     // ===== 소방 =====
@@ -1537,10 +1537,11 @@
     const gv=(d.gov||'').replace(/'/g,"");
     const nm=(curItem||'').replace(/'/g,"");
     const lawChip='<span class="pill" style="cursor:pointer;background:#e6effd;color:#2159c9" onclick="showLawModal(\''+gv+'\',\''+nm+'\')">📖 관련법령 보기 ›</span>';
+    const p3Chip = d.p3 ? '<a href="'+d.p3+'" target="_blank" rel="noopener" class="pill" style="text-decoration:none;cursor:pointer;background:#eaf7ee;color:#1f8a4c" title="P3 업무카드 열기">🗂 P3 태스크 ›</a>' : '';
     const codes=(d.gov||'').match(/I-EHS-\d+/g);
     if(codes){ const c=codes[0];
       govChip='<span onclick="showDocModal(\''+c+'\',\''+gv+'\',\''+nm+'\')" style="cursor:pointer" title="지침서 원문 팝업">'+govChip+'</span>'; }
-    document.getElementById('d-meta').innerHTML = cycChip + govChip + lawChip;
+    document.getElementById('d-meta').innerHTML = cycChip + govChip + lawChip + p3Chip;
     if(name==='연간안전보건계획'||name==='안전보건체계문서'){
       ['d-flowcard','d-tabbar','d-tabcard','d-site'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none';});
       const c=document.getElementById('d-custom'); c.style.display='';
