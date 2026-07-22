@@ -1537,7 +1537,7 @@
     const gv=(d.gov||'').replace(/'/g,"");
     const nm=(curItem||'').replace(/'/g,"");
     const lawChip='<span class="pill" style="cursor:pointer;background:#e6effd;color:#2159c9" onclick="showLawModal(\''+gv+'\',\''+nm+'\')">📖 관련법령 보기 ›</span>';
-    const p3Chip = d.p3 ? '<a href="'+d.p3+'" target="_blank" rel="noopener" class="pill" style="text-decoration:none;cursor:pointer;background:#eaf7ee;color:#1f8a4c" title="P3 업무카드 열기">🗂 P3 태스크 ›</a>' : '';
+    const _p3=stdEffP3(name); const p3Chip = _p3 ? '<a href="'+_p3+'" target="_blank" rel="noopener" class="pill" style="text-decoration:none;cursor:pointer;background:#eaf7ee;color:#1f8a4c" title="P3 업무카드 열기">🗂 P3 태스크 ›</a>' : '';
     const codes=(d.gov||'').match(/I-EHS-\d+/g);
     if(codes){ const c=codes[0];
       govChip='<span onclick="showDocModal(\''+c+'\',\''+gv+'\',\''+nm+'\')" style="cursor:pointer" title="지침서 원문 팝업">'+govChip+'</span>'; }
@@ -1904,12 +1904,13 @@
   // 사용자 수정값(고정 기준) 저장소 — localStorage
   function stdOvAll(){ try{ var ls=localStorage.getItem('ehs_std_ov'); if(ls) return JSON.parse(ls); }catch(e){} return (window.STD_DATA||{}); }
   function stdOvSave(o){ try{localStorage.setItem('ehs_std_ov', JSON.stringify(o));}catch(e){} }
-  function stdIsOv(name){ var o=stdOvAll()[name]; return !!(o && (o.law!=null || o.docs!=null || o.memo!=null)); }
+  function stdIsOv(name){ var o=stdOvAll()[name]; return !!(o && (o.law!=null || o.docs!=null || o.memo!=null || o.p3!=null)); }
   function stdEffLaw(name,g){ var o=stdOvAll()[name]; return (o && o.law!=null && o.law!=='') ? o.law : stdLaw(name,g); }
   function stdEffDocs(name,g){ var o=stdOvAll()[name];
     if(o && o.docs!=null) return String(o.docs).split(/[,\s]+/).filter(Boolean);
     return stdDocs(name,g); }
   function stdEffMemo(name){ var o=stdOvAll()[name]; if(o && o.memo!=null && o.memo!=='') return o.memo; return (itemData[name]&&itemData[name].gov)||''; }
+  function stdEffP3(name){ var o=stdOvAll()[name]; return (o && o.p3!=null && o.p3!=='') ? o.p3 : ((itemData[name]&&itemData[name].p3)||''); }
   // 확정본 파일 내보내기(std_data.js): 같은 폴더에 두면 새 창/다른 PC 유지 + 담당(Claude)이 확인 가능
   function stdExport(){ var js='window.STD_DATA = '+JSON.stringify(stdOvAll())+';\n'; var b=new Blob([js],{type:'text/javascript'}),u=URL.createObjectURL(b); var a=document.createElement('a'); a.href=u; a.download='std_data.js'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){URL.revokeObjectURL(u);},1500); if(window.toast)toast('std_data.js 저장 — 대시보드와 같은 폴더에 두세요'); }
   var STD_EDIT=null;
@@ -1919,7 +1920,8 @@
     var law=(document.getElementById('std-e-law')||{}).value||'';
     var docs=(document.getElementById('std-e-docs')||{}).value||'';
     var memo=(document.getElementById('std-e-memo')||{}).value||'';
-    var o=JSON.parse(JSON.stringify(stdOvAll())); o[name]={law:law.trim(), docs:docs.trim(), memo:memo.trim()}; stdOvSave(o); STD_EDIT=null; stdRender();
+    var p3=(document.getElementById('std-e-p3')||{}).value||'';
+    var o=JSON.parse(JSON.stringify(stdOvAll())); o[name]={law:law.trim(), docs:docs.trim(), memo:memo.trim(), p3:p3.trim()}; stdOvSave(o); STD_EDIT=null; stdRender();
     if(window.toast) toast('기준 저장: '+name);
   }
   function stdReset(name){ var o=stdOvAll(); delete o[name]; stdOvSave(o); STD_EDIT=null; stdRender(); if(window.toast) toast('초안으로 되돌림: '+name); }
@@ -1949,6 +1951,7 @@
             itemRows+='<tr style="background:#fffbe6"><td class="tag">'+glabel+'</td><td><b>'+esc(name)+'</b></td>'
               +'<td><input id="std-e-law" value="'+esc(law)+'" style="width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:6px;padding:5px 7px;font-size:12px"></td>'
               +'<td><input id="std-e-docs" value="'+esc(docs.join(', '))+'" placeholder="예: I-EHS-04, I-EHS-03" style="width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:6px;padding:5px 7px;font-size:12px"></td>'
+              +'<td><input id="std-e-p3" value="'+esc(stdEffP3(name))+'" placeholder="P3 업무카드 링크" style="width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:6px;padding:5px 7px;font-size:11px"></td>'
               +'<td><input id="std-e-memo" value="'+esc(memo)+'" placeholder="메모(변경 사유 등)" style="width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:6px;padding:5px 7px;font-size:11px"></td>'
               +'<td><span class="pill" style="background:#2159c9;color:#fff;font-size:10px">편집중</span></td>'
               +'<td style="white-space:nowrap"><button class="btn sm" onclick="stdSave(\''+nq+'\')">저장</button> <button class="btn ghost sm" onclick="stdCancel()">취소</button></td></tr>';
@@ -1956,7 +1959,9 @@
             var stat = ov ? '<span class="pill g" style="font-size:10px">확정</span>' : '<span class="pill a" style="font-size:10px">확정 대기</span>';
             var mgmt = '<button class="btn ghost sm" onclick="stdEdit(\''+nq+'\')">수정</button>'
                      + (ov ? ' <button class="btn ghost sm" onclick="stdReset(\''+nq+'\')" title="초안으로">↺</button>' : '');
+            var p3v=stdEffP3(name); var p3cell = p3v ? '<a href="'+p3v+'" target="_blank" rel="noopener" class="pill" style="text-decoration:none;background:#eaf7ee;color:#1f8a4c">🗂 열기 ›</a>' : '<span class="tag">—</span>';
             itemRows+='<tr><td class="tag">'+glabel+'</td><td><b>'+esc(name)+'</b></td><td>'+esc(law)+'</td><td>'+stdDocChips(docs)+'</td>'
+              +'<td>'+p3cell+'</td>'
               +'<td class="tag" style="font-size:11px;color:var(--muted)">'+esc(memo||'—')+'</td><td>'+stat+'</td><td style="white-space:nowrap">'+mgmt+'</td></tr>';
           }
         });
@@ -1964,7 +1969,7 @@
       });
       if(!rows) return;
       out+='<div class="ghead" style="margin:'+ (out?'18px':'2px') +' 0 6px"><span class="swatch" style="background:'+domClr+'"></span> '+domName+'</div>'
-        +'<table><thead><tr><th style="width:80px">그룹</th><th style="width:172px">항목</th><th>관련 법령</th><th style="width:180px">관련 절차서</th><th>현행 근거 메모</th><th style="width:74px">상태</th><th style="width:96px">관리</th></tr></thead><tbody>'+rows+'</tbody></table>';
+        +'<table><thead><tr><th style="width:80px">그룹</th><th style="width:172px">항목</th><th>관련 법령</th><th style="width:180px">관련 절차서</th><th style="width:84px">P3 태스크</th><th>현행 근거 메모</th><th style="width:74px">상태</th><th style="width:96px">관리</th></tr></thead><tbody>'+rows+'</tbody></table>';
     });
     var tb='<div style="display:flex;justify-content:flex-end;margin-bottom:8px"><button class="btn ghost sm" onclick="stdExport()" title="확정한 기준을 파일로 내보내 공유·유지(담당 확인용)">💾 확정본 내보내기(std_data.js)</button></div>';
     host.innerHTML=tb+(out||'<p class="tag">검색 결과 없음</p>');
