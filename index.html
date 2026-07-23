@@ -439,7 +439,7 @@
         <div id="d-meta" style="margin-bottom:16px;display:flex;gap:8px;flex-wrap:wrap"></div>
 
         <div class="card" style="margin-bottom:14px" id="d-flowcard">
-          <h3>업무 Flow <span class="tag" id="d-gov">ISO 45001 기반 흐름</span></h3>
+          <h3>업무 Flow</h3>
           <div class="flow" id="d-flow"></div>
         </div>
 
@@ -862,7 +862,8 @@
     '순회점검':{desc:'사업장 순회점검 계획·실시·결과 관리.',gov:'산업안전보건법 제35조',v:'law',
       flow:F('순회계획|','점검 실시|','지적사항 등록|','시정 이관|','결과 보고|')},
     '특수건강검진관리':{desc:'유해인자 노출 근로자 특수건강진단 대상·주기·결과 관리.',gov:'산업안전보건법 제130조',v:'law',
-      flow:F('대상 선정|유해인자','검진 계획|주기','검진 실시|','결과·사후관리|','추적|')},
+      flow:F('작업환경측정 실시 및 유해인자 확인','특수건강진단 대상자 선정','검진계획 수립 및 특수건강진단 실시','결과 확인 및 유소견자 사후관리','결과 보관 및 이력관리'),
+      files:[['작업환경측정 (모든 문서)','02. H(Health) · 작업환경측정 SharePoint','2026','공통','https://ctrcentral.sharepoint.com/sites/93/Shared%20Documents/Forms/AllItems.aspx?id=%2Fsites%2F93%2FShared%20Documents%2FCTR%20M%20EHS%ED%8C%80%2F02%2E%20H%28Health%29%2F02%2E%20%EC%9E%91%EC%97%85%ED%99%98%EA%B2%BD%EC%B8%A1%EC%A0%95&viewid=91da2876%2Dbd57%2D41b2%2D9a68%2De00ae5277b31'],['MSDS 화학물질 관리대장','우리가 만든 MSDS 관리대장(대구공장)','2026','공통','https://ctr-chem-msds.netlify.app/'],['건강검진','02. H(Health) · 03. 건강검진 SharePoint','2026','공통','https://ctrcentral.sharepoint.com/sites/93/Shared Documents/CTR M EHS팀/02. H(Health)/03. 건강검진'],['특수 사후관리소견서','건강검진 결과 사후관리소견서(SharePoint)','2026','공통','https://ctrcentral.sharepoint.com/sites/93/Shared Documents/CTR M EHS팀/02. H(Health)/03. 건강검진']]},
     '공정(작업)사용현황':{desc:'공정·작업별 화학물질 사용현황 관리(MSDS 연계).',gov:'화학물질관리법 · 산업안전보건법',v:'law',
       flow:F('공정 정의|','사용물질 매핑|MSDS','사용량 관리|','노출평가 연계|','갱신|')}
   });
@@ -1586,7 +1587,7 @@
       document.querySelector('.content').scrollTop=0;
       return;
     }
-    document.getElementById('d-gov').textContent = govNote;
+    { var _dg=document.getElementById('d-gov'); if(_dg)_dg.textContent=''; }
     document.getElementById('d-flow').innerHTML=d.flow.map((s,i)=>
       `<div class="fstep"><div class="sn">STEP ${s[0]}</div><div class="st">${s[1]}</div></div>`+
       (i<d.flow.length-1?'<div class="farrow">▶</div>':'')).join('');
