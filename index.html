@@ -2091,14 +2091,24 @@
   function showDocModal(code,gov,name){
     var body=document.getElementById('doc-body');
     var e2=function(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
-    var info=DOC_INFO[name]||DOC_INFO[code];
+    var info=DOC_INFO[name];
     var btn=(info&&info.link)
       ? '<a href="'+encodeURI(info.link)+'" target="_blank" rel="noopener" style="text-decoration:none"><button class="btn ghost sm" style="margin-left:8px;vertical-align:middle;font-size:10px;padding:3px 8px">근거자료 열기 ↗</button></a>'
       : '<button class="btn ghost sm" style="margin-left:8px;vertical-align:middle;font-size:10px;padding:3px 8px" onclick="openDoc(\''+code+'\')">원문 열기 ↗</button>';
-    var h='<div class="lm-law"><div class="lm-ln">'+e2(info?info.name:code)+btn+'</div>';
-    h+='<div class="lm-eff">'+e2(info?info.meta:gov)+'</div>';
-    if(info){ h+=info.arts.map(function(a){return '<div class="lm-art"><span class="an">'+e2(a[0])+'</span><div class="lm-txt">'+e2(a[1])+'</div></div>';}).join(''); }
-    h+='</div>';
+    var h;
+    if(info){
+      h='<div class="lm-law"><div class="lm-ln">'+e2(info.name)+btn+'</div><div class="lm-eff">'+e2(info.meta)+'</div>'
+        +info.arts.map(function(a){return '<div class="lm-art"><span class="an">'+e2(a[0])+'</span><div class="lm-txt">'+e2(a[1])+'</div></div>';}).join('')+'</div>';
+    } else {
+      // 커스텀 상세가 없으면 기준정보(메모·법령·절차서) 값을 그대로 표시
+      var _o=stdOvAll()[name]||{}; var _law=_o.law||''; var _docs=_o.docs||'';
+      h='<div class="lm-law"><div class="lm-ln">'+e2(gov||code||name)+btn+'</div>'
+        +'<div class="lm-eff">기준정보 기준 · 상세 원문은 절차서(SharePoint) 참조</div>'
+        +(_law?'<div class="lm-art"><span class="an">관련 법령</span><div class="lm-txt">'+e2(_law)+'</div></div>':'')
+        +(_docs?'<div class="lm-art"><span class="an">관련 절차서</span><div class="lm-txt">'+e2(_docs)+'</div></div>':'')
+        +'<div class="lm-art"><span class="an">근거 메모</span><div class="lm-txt">'+e2(gov||'—')+'</div></div>'
+        +'</div>';
+    }
     body.innerHTML=h;
     document.getElementById('docmodal').classList.add('show');
   }
