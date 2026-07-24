@@ -1519,20 +1519,48 @@
     cjcModal('<div style="display:flex;justify-content:space-between;align-items:start;gap:12px"><h3 style="margin:0;font-size:15px">자가진단 · '+esc(it.t)+'</h3><button class="btn ghost sm" onclick="cjcClose()">닫기</button></div><div style="font-size:11px;color:var(--muted);margin:6px 0 8px">각 문항을 적합/부적합/해당없음으로 진단하세요.</div><table><tbody>'+rows+'</tbody></table><div style="text-align:right;margin-top:14px"><button class="btn" onclick="cjcSaveSelf('+hi+','+ii+','+it.c.length+')">진단 저장</button></div>'); }
   function cjcSaveSelf(hi,ii,n){ const ans=[]; for(let q=0;q<n;q++){ const el=document.querySelector('#cjc-ov input[name=cjcq'+q+']:checked'); ans.push(el?el.value:''); } const o=cjcLoad(); o[cjcKey(hi,ii)]={date:new Date().toLocaleString('ko-KR'),ans:ans}; cjcSave(o); cjcClose(); if(curItem==='중처법 체계'){const c=document.getElementById('d-custom'); if(c)c.innerHTML=cjcHTML();} if(typeof toast==='function')toast('자가진단 저장'); }
   function cjcHTML(){
-    var base='https://ctrcentral.sharepoint.com/sites/93/Shared Documents/CTR M EHS팀/03. S(Safety)/02. 안전/07. 중처법 체계/★개체/26상/';
-    var evChip=function(pl){ return '<a href="'+encodeURI(base+pl)+'" target="_blank" rel="noopener" class="pill" style="text-decoration:none;background:#eaf7ee;color:#1f8a4c;white-space:nowrap;margin:1px;cursor:pointer">'+pl+' ↗</a>'; };
+    var SP='https://ctrcentral.sharepoint.com/sites/200/Shared Documents/EHS팀_협업공간/00. EHS팀(공통)/중처법(26\' 상 이후)/26년 상반기 보고자료/★개체/';
+    var CAT={
+      '01':{n:'01. 조직도',p:['공통','울산','서산','대구']},
+      '02':{n:'02. 경영방침',self:1},
+      '03':{n:'03. 안전 순찰 결과(발굴&개선)',self:1},
+      '04':{n:'04. 위험성평가',p:['울산','서산','대구']},
+      '05':{n:'05. EHS 관련 예산 편성 자료',p:['울산','서산','대구']},
+      '06':{n:'06. EHS 책임자,관리감독자 내부선임 서류 및 업무평가',p:['울산','서산','대구']},
+      '07':{n:'07. EHS 담당 선임 신고, 직무교육 이수증',p:['울산','서산','대구']},
+      '08':{n:'08. 산안위 회의록, 근로자 의견청취 자료',p:['공통','울산','서산','대구']},
+      '09':{n:'09. 비상사태 시나리오, 훈련 실적 등',p:['공통','울산','서산','대구']},
+      '10':{n:'10. 도급업체 평가(2차 협력사 등)',p:['울산','서산','대구']},
+      '11':{n:'11. 재해 발생시 메뉴얼',self:1},
+      '12':{n:'12. 외부 기관 진단, 점검, 컨설팅 결과 문서',p:['대구']},
+      '13':{n:'13. 연간 교육 계획, 실적 등',p:['울산','서산','대구']}
+    };
+    var MAP={'0_0':['02'],'0_1':['01'],'0_2':['04','03'],'0_3':['05'],'0_4':['06'],'0_5':['07'],'0_6':['08'],'0_7':['09','11'],'0_8':['10'],'1_0':['11'],'2_0':['12'],'3_1':['05','07'],'3_2':['13']};
+    function cjcUrl(cat,pl){ return encodeURI(SP+CAT[cat].n+(pl?'/'+pl:'')).replace(/'/g,'%27').replace(/&/g,'%26'); }
+    function cjcChip(url,label){ return '<a href="'+url+'" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none;background:#eaf7ee;color:#1f8a4c;border:1px solid #cbe8d5;border-radius:9px;padding:1px 8px;font-size:11px;margin:2px;white-space:nowrap">'+label+' ↗</a>'; }
+    function cjcEvHTML(hi,ii){
+      var cats=MAP[hi+'_'+ii];
+      if(!cats) return '<span style="color:#b7bdc7;font-size:11px">준비중</span>';
+      var s='';
+      cats.forEach(function(cat){ var c=CAT[cat];
+        s+='<span title="'+esc(c.n)+'" style="display:inline-block;background:#eef1f5;color:#5a6675;border-radius:8px;padding:1px 7px;font-size:10px;margin:2px 1px 2px 6px;white-space:nowrap">'+cat+'</span>';
+        if(c.self){ s+=cjcChip(cjcUrl(cat),'공통'); }
+        else { c.p.forEach(function(pl){ s+=cjcChip(cjcUrl(cat,pl),pl); }); }
+      });
+      return s;
+    }
     let out='<div class="card">';
     out+='<div style="margin-bottom:10px"><b style="font-size:15px">중대재해처벌법 이행현황</b> <span style="font-size:12px;color:var(--muted)">· 법 제4조(중대산업재해) · 3개 공장 통합 · '+CJC_HALF_LABEL+'</span></div>';
     CJC.forEach(function(h,hi){
       out+='<div style="background:var(--navy);color:#fff;border-radius:8px;padding:8px 12px;font-size:12.5px;font-weight:700;margin:14px 0 8px">'+h.ho+' · '+esc(CJC_LAW[h.ho].split('—')[1].trim())+'</div>';
       out+='<table><tbody>';
       h.items.forEach(function(it,ii){
-        out+='<tr><td style="font-size:12.5px;font-weight:600">'+(ii+1)+'. '+esc(it.t)+(it.b?' <span style="display:inline-block;white-space:nowrap;background:#eef1f5;color:#5a6675;font-size:10px;padding:1px 7px;border-radius:9px">'+esc(it.b)+'</span>':'')+'</td>'
-          +'<td style="white-space:nowrap;text-align:right"><button class="btn ghost sm" onclick="cjcGuide('+hi+','+ii+')">가이드</button> <span style="color:var(--muted);font-size:11px;margin:0 3px">근거자료</span>'+evChip('울산')+evChip('서산')+evChip('대구')+'</td></tr>';
+        out+='<tr><td style="width:42%;font-size:12.5px;font-weight:600;vertical-align:top;padding:8px 6px">'+(ii+1)+'. '+esc(it.t)+(it.b?' <span style="display:inline-block;white-space:nowrap;background:#eef1f5;color:#5a6675;font-size:10px;padding:1px 7px;border-radius:9px">'+esc(it.b)+'</span>':'')+'</td>'
+          +'<td style="vertical-align:top;padding:6px"><div style="margin-bottom:4px"><button class="btn ghost sm" onclick="cjcGuide('+hi+','+ii+')">가이드</button></div><div><span style="color:var(--muted);font-size:11px">근거자료</span>'+cjcEvHTML(hi,ii)+'</div></td></tr>';
       });
       out+='</tbody></table>';
     });
-    out+='<div style="font-size:11px;color:var(--muted);margin-top:12px">※ 법 제4조(중대산업재해) 15개 의무. 가이드=의무별 이행 확인사항, 근거자료=★개체(26상) 공장별 폴더 링크. 시민재해 제외.</div>';
+    out+='<div style="font-size:11px;color:var(--muted);margin-top:12px">※ 법 제4조(중대산업재해) 15개 의무. 가이드=의무별 이행 확인사항, 근거자료=협업공간 ★개체 폴더(카테고리·공장별) 링크. 회색 번호=★개체 폴더번호. 시민재해 제외.</div>';
     out+='</div>';
     return out;
   }
