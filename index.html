@@ -692,7 +692,7 @@
       flow:F('표준 제정|종류·색채','설치·게시|현장','적합성 점검|관리감독','개정·철거 관리|기록')},
     '중처법 체계':{ folder:'https://ctrcentral.sharepoint.com/sites/93/Shared Documents/CTR M EHS팀/03. S(Safety)/02. 안전/07. 중처법 체계', v:'confirmed', gov:'중대재해처벌법 · 안전보건관리체계(I-EHS-01~12 전반)', desc:'안전보건관리체계 9대 의무 이행',
       files:[['★26\' 상반기 중처법 자료(요약·구비서류).xlsx','법 규정별 중점 확인사항·확보(필요)자료·공장별 정리 — 마스터','2026 상반기','공통','https://ctrcentral.sharepoint.com/sites/200/Shared Documents/EHS팀_협업공간/00. EHS팀(공통)/중처법(26\' 상 이후)/26년 상반기 보고자료/★26\' 상반기 중처법 자료(요약,구비서류 등).xlsx'],['★개체 근거자료(26상) 폴더','9대 의무별 구비서류·증빙 (06 선임·평가·09 비상대응·10 도급평가·12 외부진단·13 교육 등, 공장별)','2026 상반기','공통','https://ctrcentral.sharepoint.com/sites/200/Shared Documents/EHS팀_협업공간/00. EHS팀(공통)/중처법(26\' 상 이후)/26년 상반기 보고자료/★개체']],
-      flow:F('경영방침·목표|수립','전담조직·예산|편성','위험성평가|유해위험 개선','종사자 의견|청취','비상대응|매뉴얼·훈련','반기 점검·개선|이행')},
+      flow:F('구축|① 안전보건관리체계 구축','운영|③ 유해·위험요인 관리 · ⑤ 종사자 참여·교육 · ⑥ 협력업체 안전관리 · ⑦ 비상대응체계 운영','점검|④ 관계법령 이행관리 · ⑨ 이행점검·경영검토','개선|⑧ 사고조사·재발방지','관리|② 목표·계획·예산관리 · ⑩ 문서·기록 관리')},
     '보호구':{ folder:'https://ctrcentral.sharepoint.com/sites/93/Shared Documents/CTR M EHS팀/03. S(Safety)/02. 안전/06. 보호구', v:'confirmed', gov:'I-EHS-04 Ⅶ. 안전보호구 관리', desc:'개인보호구 지급·관리 (안전인증품)',
       flow:F('지급기준 수립','안전인증 제품 선정','구매제작의뢰서 기반 구매','지급·관리대장 기록','마모·파손 교체')},
     '안전작업허가서':{ folder:'https://ctrcentral.sharepoint.com/sites/93/Shared Documents/CTR M EHS팀/03. S(Safety)/02. 안전/05. 안전작업허가서', v:'confirmed', gov:'I-EHS-04 Ⅵ. 안전작업허가', desc:'위험작업(화기·고소·전기·중량물·PIT·보수) 허가',
@@ -1600,8 +1600,9 @@
     if(name==='중처법 체계'){
       ['d-tabbar','d-tabcard','d-site'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none';});
       const fc=document.getElementById('d-flowcard'); if(fc)fc.style.display='';
+      var _pdca=['PLAN','DO','CHECK','ACT','기반'];
       document.getElementById('d-flow').innerHTML=d.flow.map((s,i)=>
-        `<div class="fstep"><div class="sn">STEP ${s[0]}</div><div class="st">${s[1]}</div></div>`+
+        `<div class="fstep"><div class="sn">${_pdca[i]||('STEP '+s[0])}</div><div class="st">${s[1]}</div>${s[2]?`<div class="so">${s[2]}</div>`:''}</div>`+
         (i<d.flow.length-1?'<div class="farrow">▶</div>':'')).join('');
       const c=document.getElementById('d-custom'); if(c){c.style.display=''; c.innerHTML=cjcHTML();}
       document.querySelectorAll('.page').forEach(pg=>pg.classList.remove('on'));
