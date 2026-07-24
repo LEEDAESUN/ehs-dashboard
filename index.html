@@ -1519,24 +1519,20 @@
     cjcModal('<div style="display:flex;justify-content:space-between;align-items:start;gap:12px"><h3 style="margin:0;font-size:15px">자가진단 · '+esc(it.t)+'</h3><button class="btn ghost sm" onclick="cjcClose()">닫기</button></div><div style="font-size:11px;color:var(--muted);margin:6px 0 8px">각 문항을 적합/부적합/해당없음으로 진단하세요.</div><table><tbody>'+rows+'</tbody></table><div style="text-align:right;margin-top:14px"><button class="btn" onclick="cjcSaveSelf('+hi+','+ii+','+it.c.length+')">진단 저장</button></div>'); }
   function cjcSaveSelf(hi,ii,n){ const ans=[]; for(let q=0;q<n;q++){ const el=document.querySelector('#cjc-ov input[name=cjcq'+q+']:checked'); ans.push(el?el.value:''); } const o=cjcLoad(); o[cjcKey(hi,ii)]={date:new Date().toLocaleString('ko-KR'),ans:ans}; cjcSave(o); cjcClose(); if(curItem==='중처법 체계'){const c=document.getElementById('d-custom'); if(c)c.innerHTML=cjcHTML();} if(typeof toast==='function')toast('자가진단 저장'); }
   function cjcHTML(){
-    let done=0,total=0; CJC.forEach(function(h,hi){h.items.forEach(function(it,ii){total++; if(cjcStatus(hi,ii).t==='적합')done++;});});
+    var base='https://ctrcentral.sharepoint.com/sites/93/Shared Documents/CTR M EHS팀/03. S(Safety)/02. 안전/07. 중처법 체계/★개체/26상/';
+    var evChip=function(pl){ return '<a href="'+encodeURI(base+pl)+'" target="_blank" rel="noopener" class="pill" style="text-decoration:none;background:#eaf7ee;color:#1f8a4c;white-space:nowrap;margin:1px;cursor:pointer">'+pl+' ↗</a>'; };
     let out='<div class="card">';
-    out+='<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:12px">';
-    ['울산','서산','대구'].forEach(function(s){ out+='<button class="btn '+(cjcSite===s?'':'ghost')+' sm" onclick="cjcSetSite(\''+s+'\')">'+s+'공장</button>'; });
-    out+='<span style="flex:1"></span><button class="btn sm" onclick="cjcReport()">📑 반기 근거자료 자동추출</button></div>';
-    out+='<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:6px"><div><b style="font-size:15px">중대재해처벌법 이행현황</b> <span style="font-size:12px;color:var(--muted)">· 법 제4조(중대산업재해) · '+cjcSite+'공장 · '+CJC_HALF_LABEL+'</span></div><span class="pill b">적합 '+done+' / '+total+'개 의무</span></div>';
-    out+='<div style="font-size:11px;color:var(--muted);margin-bottom:10px">신호등: <span style="color:#25b46a">●적합</span> · <span style="color:#e35d54">●부적합</span> · <span style="color:#f2a83b">●작성중</span> · <span style="color:#c3c9d3">●미실시</span> — 자가진단 결과로 사업장별 자동 표시</div>';
+    out+='<div style="margin-bottom:10px"><b style="font-size:15px">중대재해처벌법 이행현황</b> <span style="font-size:12px;color:var(--muted)">· 법 제4조(중대산업재해) · 3개 공장 통합 · '+CJC_HALF_LABEL+'</span></div>';
     CJC.forEach(function(h,hi){
       out+='<div style="background:var(--navy);color:#fff;border-radius:8px;padding:8px 12px;font-size:12.5px;font-weight:700;margin:14px 0 8px">'+h.ho+' · '+esc(CJC_LAW[h.ho].split('—')[1].trim())+'</div>';
       out+='<table><tbody>';
-      h.items.forEach(function(it,ii){ const st=cjcStatus(hi,ii); const nd=cjcEvidCount(hi,ii);
-        out+='<tr><td style="width:24px;text-align:center"><span title="'+st.t+'" style="display:inline-block;width:12px;height:12px;border-radius:50%;background:'+st.c+'"></span></td>'
-          +'<td style="font-size:12.5px;font-weight:600">'+(ii+1)+'. '+esc(it.t)+(it.b?' <span style="display:inline-block;white-space:nowrap;background:#eef1f5;color:#5a6675;font-size:10px;padding:1px 7px;border-radius:9px">'+esc(it.b)+'</span>':'')+'</td>'
-          +'<td style="white-space:nowrap;text-align:right"><button class="btn ghost sm" onclick="cjcGuide('+hi+','+ii+')">가이드</button> <button class="btn ghost sm" onclick="cjcSelf('+hi+','+ii+')">자가진단</button> <button class="btn ghost sm" onclick="cjcEvid('+hi+','+ii+')">근거자료'+(nd?' <span style="background:#e6f5ec;color:#1f9e57;border-radius:8px;padding:0 5px;font-size:10px">'+nd+'</span>':'')+'</button></td></tr>';
+      h.items.forEach(function(it,ii){
+        out+='<tr><td style="font-size:12.5px;font-weight:600">'+(ii+1)+'. '+esc(it.t)+(it.b?' <span style="display:inline-block;white-space:nowrap;background:#eef1f5;color:#5a6675;font-size:10px;padding:1px 7px;border-radius:9px">'+esc(it.b)+'</span>':'')+'</td>'
+          +'<td style="white-space:nowrap;text-align:right"><button class="btn ghost sm" onclick="cjcGuide('+hi+','+ii+')">가이드</button> <span style="color:var(--muted);font-size:11px;margin:0 3px">근거자료</span>'+evChip('울산')+evChip('서산')+evChip('대구')+'</td></tr>';
       });
       out+='</tbody></table>';
     });
-    out+='<div style="font-size:11px;color:var(--muted);margin-top:12px">※ 되고세이퍼 「중대재해처벌법 이행현황」(중대산업재해) 구조 반영. 자가진단은 사업장별로 저장(브라우저)되어 공장별 이행상태를 구분 표시합니다. 가이드는 의무별 이행 확인사항(실행방법), 근거자료는 협업공간 ★개체 폴더(의무별·공장별)와 연결. 시민재해는 제외.</div>';
+    out+='<div style="font-size:11px;color:var(--muted);margin-top:12px">※ 법 제4조(중대산업재해) 15개 의무. 가이드=의무별 이행 확인사항, 근거자료=★개체(26상) 공장별 폴더 링크. 시민재해 제외.</div>';
     out+='</div>';
     return out;
   }
